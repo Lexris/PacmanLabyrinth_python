@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from src.utils.constants import *
 
 
-class Game:
+class Pacman:
     def __init__(self, window_height, window_width):
         # init window and make it resizable
         self.window = tkinter.Tk()
@@ -30,9 +30,9 @@ class Game:
         self.pacman_food_image = Image.open(PACMAN_FOOD_IMAGE_PATH).resize((40, 40), Image.ANTIALIAS)
         self.pacman_food_tkinter_image = ImageTk.PhotoImage(self.pacman_food_image)
         # pacman game state
+        self.goals_state = PACMAN_FOOD_POSITION
         self.is_over = False
         self.timer = time.time()
-        self.setup_board()
 
     def draw_grid(self, height, width):
         """
@@ -76,7 +76,6 @@ class Game:
 
         if PACMAN_BOARD_OBSTACLES_800x800[int((new_y - 28) / 44)][int((new_x - 28) / 44)] == 0:
             self.pacman_position = (new_x, new_y)
-            print(str(int((new_y - 28) / 44)), str(int((new_x - 28) / 44)))
 
     def refresh_pacman(self):
         self.canvas.delete('pacman')
@@ -85,12 +84,18 @@ class Game:
         self.canvas.create_image(self.pacman_position[0], self.pacman_position[1], image=self.pacman_tkinter_image,
                                  tag='pacman')
 
-    def check_game_over(self):
-        if self.pacman_position[0] == self.window.winfo_width() - 1 * 44 - 28 and self.pacman_position[1] == 28 + 2 * 44:
-            self.terminate_game()
-
     def get_pacman_board_coords(self):
         return int((self.pacman_position[1] - 28) / 44), int((self.pacman_position[0] - 28) / 44)
+
+    def is_goal_state(self):
+        """
+        Check if pacman has reached the food
+        :return: True if goal has been achieved, False otherwise
+        """
+        if self.get_pacman_board_coords() == self.goals_state:
+            return True
+        else:
+            return False
 
     def draw_pacman(self, event=None):
         """
@@ -101,7 +106,8 @@ class Game:
             if event.char in PACMAN_ORIENTATION_KEYS:
                 self.set_next_pacman_position(event.char)
         self.refresh_pacman()
-        self.check_game_over()
+        if self.is_goal_state():
+            self.terminate_game()
 
     def draw_pacman_food(self):
         """
