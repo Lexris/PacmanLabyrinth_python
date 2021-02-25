@@ -21,6 +21,7 @@ class Pacman:
         self.canvas.pack(fill=tkinter.BOTH, expand=True)
         self.canvas.bind('<Configure>', self.setup_board)
         self.canvas.bind('<Key>', self.draw_pacman)
+        self.canvas.bind('<q>', self.activate_agent)
         self.canvas.bind('<1>', lambda event: self.canvas.focus_set())
 
         # load pacman graphics
@@ -37,6 +38,8 @@ class Pacman:
 
         # pacman game state
         self.board = PACMAN_BOARD_OBSTACLES_800x800
+        self.is_agent_active = False
+        self.cost = 0
         self.is_game_over = False
         self.timer = time.time()
 
@@ -92,6 +95,7 @@ class Pacman:
         new_board_coord_x = int((new_y - 28) / 44)
         new_board_coord_y = int((new_x - 28) / 44)
         if self.board[new_board_coord_x][new_board_coord_y] == 0:
+            self.cost += 1
             return (new_x, new_y), (new_board_coord_x, new_board_coord_y)
 
     def refresh_pacman(self):
@@ -145,6 +149,10 @@ class Pacman:
         self.draw_pacman()
         self.draw_pacman_food()
 
+    def activate_agent(self, event):
+        if event.char == 'q':
+            self.is_agent_active = not self.is_agent_active
+
     def start_game(self):
         """
         Launch the game
@@ -156,4 +164,6 @@ class Pacman:
         Terminate the game
         """
         self.timer = (time.time() - self.timer)
-        print("Congratulations, you won in just " + str(self.timer))
+        print("Congratulations, you won with a score of " + str(int(1 / self.timer * 10000)))
+        if self.cost == SOLUTION_OPTIMAL_COST:
+            print("Your solution is optimal, are you a robot?")

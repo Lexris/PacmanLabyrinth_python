@@ -53,7 +53,7 @@ class Agent:
 
         visited = []
         heap = []
-        heappush(heap, (0, current_state, action_list))
+        heappush(heap, (self.game.cost, current_state, action_list))
 
         while heap and not self.is_goal_state(current_state):
             heap_top = heappop(heap)

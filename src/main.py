@@ -7,10 +7,13 @@ from src.utils.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
 
 def run_pacman_solution(pacman_agent):
-    pyautogui.click(x=960, y=540)
-    solution = pacman_agent.astar_search()
-    for move in solution:
-        pyautogui.press(move)
+    while True:
+        if pacman_agent.game.is_agent_active:
+            pyautogui.click(x=960, y=540)
+            solution = pacman_agent.astar_search()
+            for move in solution:
+                pyautogui.press(move)
+            break
 
 
 if __name__ == '__main__':

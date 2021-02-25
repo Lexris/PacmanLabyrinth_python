@@ -16,7 +16,7 @@ PACMAN_CONTROLS = {
     's'
 }
 PACMAN_ORIENTATIONS = {
-    # gives the angle the pacman image need to be rotate by in order to face the direction of the pressed key
+    # gives the angle the pacman image needs to be rotated by in order to face the direction of the pressed key
     'a': {
         0: 180,
         90: 90,
@@ -74,7 +74,7 @@ PACMAN_BOARD_OBSTACLES_800x800 = [
 ]
 PACMAN_INITIAL_WINDOW_COORDS = (28, 28)
 PACMAN_FOOD_BOARD_COORDS = (2, 16)
-
+SOLUTION_OPTIMAL_COST = 68
 # colors
 BOARD_BACKGROUND_COLOR = '#262624'
 GRID_LINES_COLOR = '#ffff00'
