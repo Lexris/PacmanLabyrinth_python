@@ -97,6 +97,8 @@ class Pacman:
         if self.board[new_board_coord_x][new_board_coord_y] == 0:
             self.cost += 1
             return (new_x, new_y), (new_board_coord_x, new_board_coord_y)
+        else:
+            return (self.pacman_window_coords[0], self.pacman_window_coords[1]), (self.pacman_board_coords[0], self.pacman_board_coords[1])
 
     def refresh_pacman(self):
         """
@@ -124,12 +126,13 @@ class Pacman:
         Draws pacman according to the events
         :param event: canvas event
         """
-        if event:
-            if event.char in PACMAN_CONTROLS:
-                self.pacman_window_coords, self.pacman_board_coords = self.get_next_pacman_position(event.char)
-        self.refresh_pacman()
-        if self.is_goal_state():
-            self.terminate_game()
+        if not self.is_game_over:
+            if event:
+                if event.char in PACMAN_CONTROLS:
+                    self.pacman_window_coords, self.pacman_board_coords = self.get_next_pacman_position(event.char)
+            self.refresh_pacman()
+            if self.is_goal_state():
+                self.terminate_game()
 
     def draw_pacman_food(self):
         """
@@ -150,8 +153,7 @@ class Pacman:
         self.draw_pacman_food()
 
     def activate_agent(self, event):
-        if event.char == 'q':
-            self.is_agent_active = not self.is_agent_active
+        self.is_agent_active = not self.is_agent_active
 
     def start_game(self):
         """
@@ -167,3 +169,4 @@ class Pacman:
         print("Congratulations, you won with a score of " + str(int(1 / self.timer * 10000)))
         if self.cost == SOLUTION_OPTIMAL_COST:
             print("Your solution is optimal, are you a robot?")
+        self.is_game_over = True
