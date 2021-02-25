@@ -1,5 +1,6 @@
 from heapq import heappush, heappop
 
+
 class Agent:
 
     def __init__(self, game):

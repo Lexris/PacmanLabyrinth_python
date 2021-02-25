@@ -101,7 +101,8 @@ class Pacman:
         self.canvas.delete('pacman')
         self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
         self.canvas.move(self.pacman_tkinter_image, self.pacman_window_coords[0], self.pacman_window_coords[1])
-        self.canvas.create_image(self.pacman_window_coords[0], self.pacman_window_coords[1], image=self.pacman_tkinter_image,
+        self.canvas.create_image(self.pacman_window_coords[0], self.pacman_window_coords[1],
+                                 image=self.pacman_tkinter_image,
                                  tag='pacman')
 
     def is_goal_state(self):
