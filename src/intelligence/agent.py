@@ -6,21 +6,17 @@ class Agent:
     def __init__(self, game):
         self.game = game
 
-    def euclidean_heuristic(self, window_coords):
-        xy1 = window_coords
+    def euclidean_heuristic(self, state_board_coords):
+        """
+        Compute euclidean distance heuristic for the astar algorithm. The distance is calculated in terms of the board
+        positions(not the window positions). Window positions could also be used, but performance-wise it would be the
+        same.
+        :param state_board_coords: coordinates we'll calculate the heuristic for
+        :return: heuristic distance value
+        """
+        xy1 = state_board_coords
         xy2 = self.game.pacman_food_board_coords
         return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5
-
-    def is_goal_state(self, state):
-        """
-        Check if pacman hypothetical state has reached the food
-        :param state: state of the agent-controlled character within the game environment
-        :return: True if goal state has been reached, False otherwise
-        """
-        if state == self.game.pacman_food_board_coords:
-            return True
-        else:
-            return False
 
     @staticmethod
     def get_successors(state, board):
@@ -55,7 +51,7 @@ class Agent:
         heap = []
         heappush(heap, (self.game.cost, current_state, action_list))
 
-        while heap and not self.is_goal_state(current_state):
+        while heap and not self.game.is_goal_state(current_state):
             heap_top = heappop(heap)
             current_state, action_list = (heap_top[i] for i in [1, 2])
 

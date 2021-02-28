@@ -11,7 +11,7 @@ class Pacman(BaseGame):
 
         # bind specific pacman functionalities to canvas
         self.canvas.bind('<Configure>', self.setup_board)
-        self.canvas.bind('<Key>', self.draw_pacman)
+        self.canvas.bind('<Key>', self.refresh_pacman)
         self.canvas.bind('<q>', self.toggle_agent)
 
         # load pacman graphics
@@ -41,22 +41,22 @@ class Pacman(BaseGame):
             self.canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 i, PACMAN_BOARD_800x800_WINDOW_MARGIN, i, height - 1,
-                fill=GRID_LINES_COLOR,
-                tag='grid'
+                fill=GRID_COLOR,
+                tag=GRID_TAG
             )
         for i in range(PACMAN_BOARD_800x800_WINDOW_MARGIN, width, PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH):
             self.canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 PACMAN_BOARD_800x800_WINDOW_MARGIN, i, width - 1, i,
-                fill=GRID_LINES_COLOR,
-                tag='grid'
+                fill=GRID_COLOR,
+                tag=GRID_TAG
             )
 
     def draw_obstacles(self):
         """
         Draw the obstacles where the labyrinth matrix's value is 1
         """
-        self.canvas.delete('obstacles')
+        self.canvas.delete(OBSTACLES_TAG)
         for i in range(0, PACMAN_BOARD_800x800_SIDE_SQUARES_NUMBER):
             for j in range(0, PACMAN_BOARD_800x800_SIDE_SQUARES_NUMBER):
                 if self.board[j][i] == 1:
@@ -65,9 +65,47 @@ class Pacman(BaseGame):
                         PACMAN_BOARD_800x800_WINDOW_MARGIN + PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH * j,
                         PACMAN_BOARD_800x800_WINDOW_MARGIN + PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH * (i + 1),
                         PACMAN_BOARD_800x800_WINDOW_MARGIN + PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH * (j + 1),
-                        fill='yellow',
-                        tag='obstacles'
+                        fill=OBSTACLES_COLOR,
+                        tag=OBSTACLES_TAG
                     )
+
+    def draw_pacman(self):
+        """
+        Draw pacman
+        """
+        self.canvas.delete(PACMAN_TAG)
+        self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
+        self.canvas.move(self.pacman_tkinter_image, self.pacman_window_coords[0], self.pacman_window_coords[1])
+        self.canvas.create_image(
+            self.pacman_window_coords[0],
+            self.pacman_window_coords[1],
+            image=self.pacman_tkinter_image,
+            tag=PACMAN_TAG
+        )
+
+    def draw_pacman_food(self):
+        """
+        Draw the pacman food(objective)
+        """
+        self.canvas.delete(PACMAN_FOOD_TAG)
+        self.canvas.create_image(
+            self.window.winfo_width() - 1 * PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH - FOOD_MARGIN,
+            FOOD_MARGIN + 2 * PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH,
+            image=self.pacman_food_tkinter_image,
+            tag=PACMAN_FOOD_TAG
+        )
+
+    def setup_board(self, event=None):
+        """
+        Setup the board for the labyrinth game: draw the grid, draw the obstacles, draw pacman and pacman food
+        :param event: the only event that should trigger this function is the initialization of the canvas(which
+        only happens once throughout the lifespan of the process)
+        """
+        self.canvas.config(height=event.height - 4, width=event.width - 4)
+        self.draw_grid(height=event.height - 4, width=event.width - 4)
+        self.draw_obstacles()
+        self.draw_pacman()
+        self.draw_pacman_food()
 
     def get_next_pacman_position(self, move):
         """
@@ -103,58 +141,27 @@ class Pacman(BaseGame):
             return (self.pacman_window_coords[0], self.pacman_window_coords[1]), \
                    (self.pacman_board_coords[0], self.pacman_board_coords[1])
 
-    def refresh_pacman(self):
+    def refresh_pacman(self, event=None):
         """
-        Redraw pacman with the new orientation and position
-        """
-        self.canvas.delete('pacman')
-        self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
-        self.canvas.move(self.pacman_tkinter_image, self.pacman_window_coords[0], self.pacman_window_coords[1])
-        self.canvas.create_image(
-            self.pacman_window_coords[0],
-            self.pacman_window_coords[1],
-            image=self.pacman_tkinter_image,
-            tag='pacman'
-        )
-
-    def draw_pacman(self, event=None):
-        """
-        Draws pacman according to the events
-        :param event: canvas event
+        Refresh pacman according to the events
+        :param event: changes will be made to the game state if and only if the event is triggered by the defined
+        movement keys(see constants.py)
         """
         if not self.is_game_over:
             if event:
                 if event.char in PACMAN_CONTROLS:
                     self.pacman_window_coords, self.pacman_board_coords = self.get_next_pacman_position(event.char)
-            self.refresh_pacman()
+                    self.draw_pacman()
             if self.is_goal_state():
                 self.terminate_game()
 
-    def draw_pacman_food(self):
+    def is_goal_state(self, state=None):
         """
-        Draw the pacman food(objective)
+        Check if pacman has reached the food.
+        :param state: state to be checked; if None, current state of the game will be checked
+        :return: True if state is goal state, False otherwise
         """
-        self.canvas.delete('pacman_food')
-        self.canvas.create_image(
-            self.window.winfo_width() - 1 * PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH - FOOD_MARGIN,
-            FOOD_MARGIN + 2 * PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH,
-            image=self.pacman_food_tkinter_image,
-            tag='pacman_food'
-        )
-
-    def setup_board(self, event=None):
-        """
-        Setup the board for the labyrinth game: draw the grid, draw the obstacles, draw pacman and pacman food
-        """
-        self.canvas.config(height=event.height - 4, width=event.width - 4)
-        self.draw_grid(height=event.height - 4, width=event.width - 4)
-        self.draw_obstacles()
-        self.draw_pacman()
-        self.draw_pacman_food()
-
-    def is_goal_state(self):
-        """
-        Check if pacman has reached the food
-        :return: True if goal has been achieved, False otherwise
-        """
-        return self.pacman_board_coords == self.pacman_food_board_coords
+        if state:
+            return state == self.pacman_food_board_coords
+        else:
+            return self.pacman_board_coords == self.pacman_food_board_coords

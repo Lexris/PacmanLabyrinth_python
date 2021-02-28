@@ -10,13 +10,14 @@ PACMAN_FOOD_IMAGE_PATH = 'graphics/pacman_food_graphic.png'
 
 # pacman controls
 PACMAN_CONTROLS = {
+    # keys used for controlling pacman
     'a',
     'w',
     'd',
     's'
 }
 PACMAN_ORIENTATIONS = {
-    # gives the angle the pacman image needs to be rotated by in order to face the direction of the pressed key
+    # gives the angle pacman needs to be rotated by in order to face the direction represented by the pressed key
     'a': {
         0: 180,
         90: 90,
@@ -47,6 +48,7 @@ PACMAN_ORIENTATIONS = {
     }
 }
 PACMAN_MOVEMENTS = {
+    # displacement needed to pass from square to square, using the window coords(pixels) for movement
     'a': (-44, 0),
     'w': (0, -44),
     'd': (44, 0),
@@ -83,9 +85,16 @@ PACMAN_INITIAL_WINDOW_COORDS = (28, 28)
 PACMAN_FOOD_BOARD_COORDS = (2, 16)
 SOLUTION_OPTIMAL_COST = 68
 
+# tags
+GRID_TAG = 'grid'
+OBSTACLES_TAG = 'obstacles'
+PACMAN_TAG = 'pacman'
+PACMAN_FOOD_TAG = 'pacman_food'
+
 # colors
 BOARD_BACKGROUND_COLOR = '#262624'
-GRID_LINES_COLOR = '#ffff00'
+GRID_COLOR = '#ffff00'
+OBSTACLES_COLOR = '#ffff00'
 
 # others
 SCORE_NORMALIZATION_FACTOR = 10000

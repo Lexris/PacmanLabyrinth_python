@@ -15,7 +15,8 @@ class BaseGame:
         self.window.geometry('+%d+%d' % (window_coord_x, window_coord_y))
         self.window.iconphoto(False, tkinter.PhotoImage(file=WINDOW_LOGO_IMAGE_PATH))
         self.window.resizable(False, False)
-        self.window.protocol("WM_DELETE_WINDOW", self.exit_protocol)
+        self.window.protocol('WM_DELETE_WINDOW', self.exit_protocol)
+        self.window.config(cursor='none')
 
         # init canvas and bind basic functionalities
         self.canvas = tkinter.Canvas(self.window, height=window_height, width=window_width, bg=BOARD_BACKGROUND_COLOR)
@@ -32,6 +33,10 @@ class BaseGame:
         self.exit = False
 
     def toggle_agent(self, event=None):
+        """
+        Toggle search agent on/off
+        :param event: function will only run for a <q> keypress
+        """
         self.is_agent_active = not self.is_agent_active
 
     def launch_game(self):
@@ -42,7 +47,8 @@ class BaseGame:
 
     def terminate_game(self):
         """
-        Terminate the game
+        Terminate the game when the user wins, and calculate the score as a function of the time the user needed for
+        game completion
         """
         self.timer = (time.time() - self.timer)
         print("Congratulations, you won with a score of " + str(int(1 / self.timer * SCORE_NORMALIZATION_FACTOR)))
@@ -53,7 +59,7 @@ class BaseGame:
     def exit_protocol(self, event=None):
         """
         Exit the program
-        :param event: will be an "<Esc" event
+        :param event: will be an <Esc> event
         """
         self.window.destroy()
         self.exit = True
