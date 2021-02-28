@@ -8,7 +8,7 @@ WINDOW_LOGO_IMAGE_PATH = 'graphics/pacman_graphic_transparent.png'
 PACMAN_IMAGE_PATH = 'graphics/pacman_graphic.png'
 PACMAN_FOOD_IMAGE_PATH = 'graphics/pacman_food_graphic.png'
 
-# board constants
+# pacman controls
 PACMAN_CONTROLS = {
     'a',
     'w',
@@ -52,7 +52,12 @@ PACMAN_MOVEMENTS = {
     'd': (44, 0),
     's': (0, 44)
 }
-PACMAN_BOARD_OBSTACLES_800x800 = [
+
+# pacman board
+PACMAN_BOARD_800x800_SIDE_SQUARES_NUMBER = 18
+PACMAN_BOARD_800x800_SQUARE_SIDE_LENGTH = 44
+PACMAN_BOARD_800x800_WINDOW_MARGIN = 6
+PACMAN_BOARD_800x800_OBSTACLES = [
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0],
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
@@ -72,9 +77,16 @@ PACMAN_BOARD_OBSTACLES_800x800 = [
     [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
     [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
+PACMAN_MARGIN = 28
+FOOD_MARGIN = 28
 PACMAN_INITIAL_WINDOW_COORDS = (28, 28)
 PACMAN_FOOD_BOARD_COORDS = (2, 16)
 SOLUTION_OPTIMAL_COST = 68
+
 # colors
 BOARD_BACKGROUND_COLOR = '#262624'
 GRID_LINES_COLOR = '#ffff00'
+
+# others
+SCORE_NORMALIZATION_FACTOR = 10000
+IMAGE_RESIZE_FACTOR = 40
