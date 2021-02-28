@@ -23,7 +23,7 @@ class BaseGame:
         self.canvas.bind('<1>', lambda event: self.canvas.focus_set())
         self.canvas.bind('<Escape>', self.exit_protocol)
 
-        # pacman game state
+        # game state
         self.board = PACMAN_BOARD_800x800_OBSTACLES  # for the sake of decoupling agent.py from constants.py
         self.is_agent_active = False
         self.cost = 0
