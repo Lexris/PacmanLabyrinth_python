@@ -1,11 +1,12 @@
 import time
 import tkinter
 
-from src.model.utils.constants import *
+from src.utils.constants import *
+from src.game.model.utils.constants import *
 
 
-class BaseGame:
-    def __init__(self, window_height, window_width):
+class BaseGameView:
+    def __init__(self, window_height, window_width, difficulty):
         # init window, set screen position, change window icon, disable resize
         self._window = tkinter.Tk()
         self._window.title(WINDOW_TITLE)
@@ -26,9 +27,10 @@ class BaseGame:
 
         # game state
         self._game_state = False
-        self.board = PACMAN_BOARD_OBSTACLES_DIFFICULT  # for the sake of decoupling agent.py from constants.py
+        self.board = PACMAN_BOARD_OBSTACLES[difficulty]  # for the sake of decoupling agent.py from constants.py
         self.agent_state = False
         self.cost = 0
+        self.optimal_solution = SOLUTION_OPTIMAL_COST[difficulty]
         self.timer = time.time()
         self.exit = False
 
@@ -47,7 +49,7 @@ class BaseGame:
         """
         self.timer = (time.time() - self.timer)
         print("Congratulations, you won with a score of " + str(int(1 / self.timer * SCORE_NORMALIZATION_FACTOR)))
-        if self.cost == SOLUTION_OPTIMAL_COST:
+        if self.cost == self.optimal_solution:
             print("Your solution is optimal, are you a robot?")
         self._game_state = True
 

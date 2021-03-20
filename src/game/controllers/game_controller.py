@@ -1,14 +1,14 @@
 import threading
 import pyautogui
 
-from src.environment.pacman import Pacman
-from src.model.intelligence.agent import Agent
+from src.game.view.pacman_view import PacmanView
+from src.game.model.intelligence.agent import Agent
 import time
 
 
 class GameController:
-    def __init__(self, window_height, window_width):
-        self._game = Pacman(window_height, window_width)
+    def __init__(self, window_height, window_width, difficulty):
+        self._game = PacmanView(window_height, window_width, difficulty)
         self._agent = Agent(self._game)
 
     def __run_pacman_solution(self):

@@ -22,8 +22,8 @@ class Agent:
     def get_successors(state, board):
         """
         Get all possible next moves for pacman
-        :param state: state of the agent-controlled character within the game environment
-        :param board: the game environment
+        :param state: state of the agent-controlled character within the game view
+        :param board: the game view
         :return: list of possible moves
         """
         successors = []

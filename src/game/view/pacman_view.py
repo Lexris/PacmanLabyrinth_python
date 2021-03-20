@@ -1,34 +1,36 @@
 from PIL import Image, ImageTk
 
-from src.environment.base_game import BaseGame
-from src.model.utils.constants import *
+from src.game.view.base_game_view import BaseGameView
+from src.game.model.utils.constants import *
 
 
-class Pacman(BaseGame):
-    def __init__(self, window_height, window_width):
+class PacmanView(BaseGameView):
+    def __init__(self, window_height, window_width, difficulty):
         # init base game class(common game features)
-        super().__init__(window_height, window_width)
+        super().__init__(window_height, window_width, difficulty)
 
         # bind specific pacman functionalities to canvas
         self._canvas.bind('<Configure>', self.__setup_board)
         self._canvas.bind('<Key>', self.__refresh_pacman)
         self._canvas.bind('<q>', self._toggle_agent)
 
-        # load pacman graphics
-        self.pacman_image = Image\
-            .open(PACMAN_IMAGE_PATH)\
-            .resize((IMAGE_RESIZE_FACTOR, IMAGE_RESIZE_FACTOR), Image.ANTIALIAS)
+        # load pacman resources
+        self.pacman_image = Image \
+            .open(PACMAN_IMAGE_PATH) \
+            .resize((PACMAN_IMAGE_RESIZE_FACTOR, PACMAN_IMAGE_RESIZE_FACTOR), Image.ANTIALIAS)
         self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
         self.pacman_angle = 0
-        self.pacman_window_coords = PACMAN_INITIAL_WINDOW_COORDS_DIFFICULT
-        self.pacman_board_coords = (0, 0)
+        self.pacman_window_coords = PACMAN_INITIAL_WINDOW_COORDS[difficulty]
+        self.pacman_board_coords = PACMAN_INITIAL_BOARD_COORDS[difficulty]
 
-        # load pacman food graphics
-        self.pacman_food_image = Image\
-            .open(PACMAN_FOOD_IMAGE_PATH)\
-            .resize((IMAGE_RESIZE_FACTOR, IMAGE_RESIZE_FACTOR), Image.ANTIALIAS)
+        # load pacman food resources
+        self.pacman_food_image = Image.open(PACMAN_FOOD_IMAGE_PATH).resize(
+            (PACMAN_FOOD_IMAGE_RESIZE_FACTOR, PACMAN_FOOD_IMAGE_RESIZE_FACTOR),
+            Image.ANTIALIAS
+        )
         self.pacman_food_tkinter_image = ImageTk.PhotoImage(self.pacman_food_image)
-        self.pacman_food_board_coords = PACMAN_FOOD_BOARD_COORDS_DIFFICULT
+        self.pacman_food_board_coords = PACMAN_FOOD_BOARD_COORDS[difficulty]
+        self.pacman_food_window_coords = PACMAN_FOOD_WINDOW_COORDS[difficulty]
 
     def __draw_grid(self, height, width):
         """
@@ -41,14 +43,14 @@ class Pacman(BaseGame):
             self._canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 i, PACMAN_BOARD_WINDOW_MARGIN, i, height - 1,
-                fill=GRID_COLOR,
+                fill=BOARD_GRID_COLOR,
                 tag=GRID_TAG
             )
         for i in range(PACMAN_BOARD_WINDOW_MARGIN, width, PACMAN_BOARD_SQUARE_SIDE_LENGTH):
             self._canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 PACMAN_BOARD_WINDOW_MARGIN, i, width - 1, i,
-                fill=GRID_COLOR,
+                fill=BOARD_GRID_COLOR,
                 tag=GRID_TAG
             )
 
@@ -65,7 +67,7 @@ class Pacman(BaseGame):
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * j,
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * (i + 1),
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * (j + 1),
-                        fill=OBSTACLES_COLOR,
+                        fill=BOARD_OBSTACLES_COLOR,
                         tag=OBSTACLES_TAG
                     )
 
@@ -89,11 +91,14 @@ class Pacman(BaseGame):
         """
         self._canvas.delete(PACMAN_FOOD_TAG)
         self._canvas.create_image(
-            FOOD_MARGIN + 16 * PACMAN_BOARD_SQUARE_SIDE_LENGTH,
-            FOOD_MARGIN + 2 * PACMAN_BOARD_SQUARE_SIDE_LENGTH,
+            self.pacman_food_window_coords[0],
+            self.pacman_food_window_coords[1],
             image=self.pacman_food_tkinter_image,
             tag=PACMAN_FOOD_TAG
         )
+        # # get food position(formula for when maze generator is added)
+        # print(FOOD_MARGIN + self.pacman_food_board_coords[1] * PACMAN_BOARD_SQUARE_SIDE_LENGTH,
+        #       FOOD_MARGIN + self.pacman_food_board_coords[0] * PACMAN_BOARD_SQUARE_SIDE_LENGTH)
 
     def __setup_board(self, event=None):
         """
