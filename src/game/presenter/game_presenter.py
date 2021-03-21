@@ -6,7 +6,7 @@ from src.game.model.intelligence.agent import Agent
 import time
 
 
-class GameController:
+class GamePresenter:
     def __init__(self, window_height, window_width, difficulty):
         self._game = PacmanView(window_height, window_width, difficulty)
         self._agent = Agent(self._game)
@@ -19,7 +19,7 @@ class GameController:
         only when/if it is initiated through the game event and the same goes for exiting the program.
         """
         while True:
-            if self._game.exit is True:
+            if self._game.game_state or self._game.exit:
                 exit(2)
             elif self._game.agent_state:
                 pyautogui.click(x=self._game.screen_size[0] / 2, y=self._game.screen_size[1] / 2)
@@ -32,6 +32,9 @@ class GameController:
                         break
                 self._game.agent_state = False
             time.sleep(0.25)
+
+    def should_exit(self):
+        return self._game.exit
 
     def launch_game(self):
         """

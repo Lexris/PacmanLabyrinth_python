@@ -15,22 +15,22 @@ class PacmanView(BaseGameView):
         self._canvas.bind('<q>', self._toggle_agent)
 
         # load pacman resources
-        self.pacman_image = Image \
+        self._pacman_image = Image \
             .open(PACMAN_IMAGE_PATH) \
             .resize((PACMAN_IMAGE_RESIZE_FACTOR, PACMAN_IMAGE_RESIZE_FACTOR), Image.ANTIALIAS)
-        self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
-        self.pacman_angle = 0
-        self.pacman_window_coords = PACMAN_INITIAL_WINDOW_COORDS[difficulty]
+        self._pacman_tkinter_image = ImageTk.PhotoImage(self._pacman_image)
+        self._pacman_angle = 0
+        self._pacman_window_coords = PACMAN_INITIAL_WINDOW_COORDS[difficulty]
         self.pacman_board_coords = PACMAN_INITIAL_BOARD_COORDS[difficulty]
 
         # load pacman food resources
-        self.pacman_food_image = Image.open(PACMAN_FOOD_IMAGE_PATH).resize(
+        self._pacman_food_image = Image.open(PACMAN_FOOD_IMAGE_PATH).resize(
             (PACMAN_FOOD_IMAGE_RESIZE_FACTOR, PACMAN_FOOD_IMAGE_RESIZE_FACTOR),
             Image.ANTIALIAS
         )
-        self.pacman_food_tkinter_image = ImageTk.PhotoImage(self.pacman_food_image)
+        self._pacman_food_tkinter_image = ImageTk.PhotoImage(self._pacman_food_image)
         self.pacman_food_board_coords = PACMAN_FOOD_BOARD_COORDS[difficulty]
-        self.pacman_food_window_coords = PACMAN_FOOD_WINDOW_COORDS[difficulty]
+        self._pacman_food_window_coords = PACMAN_FOOD_WINDOW_COORDS[difficulty]
 
     def __draw_grid(self, height, width):
         """
@@ -76,12 +76,12 @@ class PacmanView(BaseGameView):
         Draw pacman
         """
         self._canvas.delete(PACMAN_TAG)
-        self.pacman_tkinter_image = ImageTk.PhotoImage(self.pacman_image)
-        self._canvas.move(self.pacman_tkinter_image, self.pacman_window_coords[0], self.pacman_window_coords[1])
+        self._pacman_tkinter_image = ImageTk.PhotoImage(self._pacman_image)
+        self._canvas.move(self._pacman_tkinter_image, self._pacman_window_coords[0], self._pacman_window_coords[1])
         self._canvas.create_image(
-            self.pacman_window_coords[0],
-            self.pacman_window_coords[1],
-            image=self.pacman_tkinter_image,
+            self._pacman_window_coords[0],
+            self._pacman_window_coords[1],
+            image=self._pacman_tkinter_image,
             tag=PACMAN_TAG
         )
 
@@ -91,9 +91,9 @@ class PacmanView(BaseGameView):
         """
         self._canvas.delete(PACMAN_FOOD_TAG)
         self._canvas.create_image(
-            self.pacman_food_window_coords[0],
-            self.pacman_food_window_coords[1],
-            image=self.pacman_food_tkinter_image,
+            self._pacman_food_window_coords[0],
+            self._pacman_food_window_coords[1],
+            image=self._pacman_food_tkinter_image,
             tag=PACMAN_FOOD_TAG
         )
         # # get food position(formula for when maze generator is added)
@@ -124,13 +124,13 @@ class PacmanView(BaseGameView):
         :param move: indicates the direction of intended movement
         """
         # rotate the pacman image as to simulate the orientation of the character
-        rotation_angle = PACMAN_ORIENTATIONS.get(move).get(self.pacman_angle)
-        self.pacman_image = self.pacman_image.rotate(rotation_angle)
-        self.pacman_angle += rotation_angle
+        rotation_angle = PACMAN_ORIENTATIONS.get(move).get(self._pacman_angle)
+        self._pacman_image = self._pacman_image.rotate(rotation_angle)
+        self._pacman_angle += rotation_angle
 
         # get new pacman position
-        new_x = self.pacman_window_coords[0] + PACMAN_MOVEMENTS[move][0]
-        new_y = self.pacman_window_coords[1] + PACMAN_MOVEMENTS[move][1]
+        new_x = self._pacman_window_coords[0] + PACMAN_MOVEMENTS[move][0]
+        new_y = self._pacman_window_coords[1] + PACMAN_MOVEMENTS[move][1]
 
         # check if position indicated by move is within the boundaries of the board
         if new_x < PACMAN_MARGIN:
@@ -149,7 +149,7 @@ class PacmanView(BaseGameView):
             self.cost += 1
             return (new_x, new_y), (new_board_coord_x, new_board_coord_y)
         else:
-            return (self.pacman_window_coords[0], self.pacman_window_coords[1]), \
+            return (self._pacman_window_coords[0], self._pacman_window_coords[1]), \
                    (self.pacman_board_coords[0], self.pacman_board_coords[1])
 
     def __refresh_pacman(self, event=None):
@@ -158,10 +158,10 @@ class PacmanView(BaseGameView):
         :param event: changes will be made to the game state if and only if the event is triggered by the defined
         movement keys(see constants.py)
         """
-        if not self._game_state:
+        if not self.game_state:
             if event:
                 if event.char in PACMAN_CONTROLS:
-                    self.pacman_window_coords, self.pacman_board_coords = self.__get_next_pacman_position(event.char)
+                    self._pacman_window_coords, self.pacman_board_coords = self.__get_next_pacman_position(event.char)
                     self.__draw_pacman()
             if self.is_goal_state():
                 self._terminate_game()
