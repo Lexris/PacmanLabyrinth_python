@@ -9,11 +9,6 @@ class PacmanView(BaseGameView):
         # init base game class(common game features)
         super().__init__(window_height, window_width, difficulty)
 
-        # bind specific pacman functionalities to canvas
-        self._canvas.bind('<Configure>', self.__setup_board)
-        self._canvas.bind('<Key>', self.__refresh_pacman)
-        self._canvas.bind('<q>', self._toggle_agent)
-
         # load pacman resources
         self._pacman_image = Image \
             .open(PACMAN_IMAGE_PATH) \
@@ -38,16 +33,16 @@ class PacmanView(BaseGameView):
         :param height: window height
         :param width: window width
         """
-        self._canvas.delete('grid')
+        self.canvas.delete('grid')
         for i in range(PACMAN_BOARD_WINDOW_MARGIN, height, PACMAN_BOARD_SQUARE_SIDE_LENGTH):
-            self._canvas.create_line(
+            self.canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 i, PACMAN_BOARD_WINDOW_MARGIN, i, height - 1,
                 fill=BOARD_GRID_COLOR,
                 tag=GRID_TAG
             )
         for i in range(PACMAN_BOARD_WINDOW_MARGIN, width, PACMAN_BOARD_SQUARE_SIDE_LENGTH):
-            self._canvas.create_line(
+            self.canvas.create_line(
                 # coords for starting and ending point of the line x1, y1, x2 ,y2
                 PACMAN_BOARD_WINDOW_MARGIN, i, width - 1, i,
                 fill=BOARD_GRID_COLOR,
@@ -58,11 +53,11 @@ class PacmanView(BaseGameView):
         """
         Draw the obstacles where the labyrinth matrix's value is 1
         """
-        self._canvas.delete(OBSTACLES_TAG)
+        self.canvas.delete(OBSTACLES_TAG)
         for i in range(0, PACMAN_BOARD_SIDE_SQUARES_NUMBER):
             for j in range(0, PACMAN_BOARD_SIDE_SQUARES_NUMBER):
                 if self.board[j][i] == 1:
-                    self._canvas.create_rectangle(
+                    self.canvas.create_rectangle(
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * i,
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * j,
                         PACMAN_BOARD_WINDOW_MARGIN + PACMAN_BOARD_SQUARE_SIDE_LENGTH * (i + 1),
@@ -75,10 +70,10 @@ class PacmanView(BaseGameView):
         """
         Draw pacman
         """
-        self._canvas.delete(PACMAN_TAG)
+        self.canvas.delete(PACMAN_TAG)
         self._pacman_tkinter_image = ImageTk.PhotoImage(self._pacman_image)
-        self._canvas.move(self._pacman_tkinter_image, self._pacman_window_coords[0], self._pacman_window_coords[1])
-        self._canvas.create_image(
+        self.canvas.move(self._pacman_tkinter_image, self._pacman_window_coords[0], self._pacman_window_coords[1])
+        self.canvas.create_image(
             self._pacman_window_coords[0],
             self._pacman_window_coords[1],
             image=self._pacman_tkinter_image,
@@ -89,8 +84,8 @@ class PacmanView(BaseGameView):
         """
         Draw the pacman food(objective)
         """
-        self._canvas.delete(PACMAN_FOOD_TAG)
-        self._canvas.create_image(
+        self.canvas.delete(PACMAN_FOOD_TAG)
+        self.canvas.create_image(
             self._pacman_food_window_coords[0],
             self._pacman_food_window_coords[1],
             image=self._pacman_food_tkinter_image,
@@ -100,13 +95,13 @@ class PacmanView(BaseGameView):
         # print(FOOD_MARGIN + self.pacman_food_board_coords[1] * PACMAN_BOARD_SQUARE_SIDE_LENGTH,
         #       FOOD_MARGIN + self.pacman_food_board_coords[0] * PACMAN_BOARD_SQUARE_SIDE_LENGTH)
 
-    def __setup_board(self, event=None):
+    def setup_board(self, event=None):
         """
         Setup the board for the labyrinth game: draw the grid, draw the obstacles, draw pacman and pacman food
         :param event: the only event that should trigger this function is the initialization of the canvas(which
         only happens once throughout the lifespan of the process)
         """
-        self._canvas.config(
+        self.canvas.config(
             height=event.height - CANVAS_CONFIG_BUX_FIX_MARGIN,
             width=event.width - CANVAS_CONFIG_BUX_FIX_MARGIN
         )
@@ -152,7 +147,7 @@ class PacmanView(BaseGameView):
             return (self._pacman_window_coords[0], self._pacman_window_coords[1]), \
                    (self.pacman_board_coords[0], self.pacman_board_coords[1])
 
-    def __refresh_pacman(self, event=None):
+    def refresh_pacman(self, event=None):
         """
         Refresh pacman according to the events
         :param event: changes will be made to the game state if and only if the event is triggered by the defined

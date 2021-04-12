@@ -4,8 +4,8 @@ import time
 import pyautogui
 from win32api import GetSystemMetrics
 
-from src.game.presenter.game_presenter import GamePresenter
-from src.menu.presenter.menu_presenter import MenuPresenter
+from src.game.presenter.game_controller import GamePresenter
+from src.menu.presenter.menu_controller import MenuPresenter
 from src.utils.constants import WINDOW_HEIGHT, WINDOW_WIDTH
 
 
@@ -24,12 +24,12 @@ if __name__ == '__main__':
         # auto-focus next window
         agent_thread = threading.Thread(target=focus_new_window, args=(screen_height, screen_width))
         agent_thread.start()
-        difficulty = menu_controller.select_difficulty()
+        difficulty, heuristic = menu_controller.select_game_settings()
         if menu_controller.should_exit():
             break
 
         # create game window
-        pacman_controller = GamePresenter(WINDOW_HEIGHT, WINDOW_WIDTH, difficulty)
+        pacman_controller = GamePresenter(WINDOW_HEIGHT, WINDOW_WIDTH, difficulty, heuristic)
         # auto-focus next window
         agent_thread = threading.Thread(target=focus_new_window, args=(screen_height, screen_width))
         agent_thread.start()

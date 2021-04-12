@@ -19,8 +19,12 @@ class MenuPresenter:
         for rb in self.__menu.radio_buttons:
             rb.config(command=self._radio_buttons_bind)
 
+        for rb in self.__menu.heuristic_radio_buttons:
+            rb.config(command=self._heuristic_radio_buttons_bind)
+
         # init radiobutton and difficulty preview image
         self.__menu.radio_buttons[1].invoke()
+        self.__menu.heuristic_radio_buttons[0].invoke()
 
         # bind submit button to start game with selected difficulty
         self.__menu.button.config(command=lambda: self.terminate_menu())
@@ -39,6 +43,17 @@ class MenuPresenter:
         self.__menu.difficulty_preview.image = self.__menu.difficulty_tkinter_images[selected_radio_button_rang]
         self.__menu.last_selected_radio_button_rang = selected_radio_button_rang
 
+    def _heuristic_radio_buttons_bind(self):
+        """
+        Update appearance of the lastly and newly pressed radio buttons
+        """
+        selected_heuristic_radio_button_rang = int(self.__menu.heuristicsContainer.get())
+        self.__menu.heuristic_radio_buttons[self.__menu.last_selected_heuristic_radio_button_rang].configure(foreground=MENU_ACCENT_COLOR,
+                                                                                         background=MENU_BACKGROUND_COLOR)
+        self.__menu.heuristic_radio_buttons[selected_heuristic_radio_button_rang].configure(foreground=MENU_BACKGROUND_COLOR,
+                                                                        background=MENU_ACCENT_COLOR)
+        self.__menu.last_selected_heuristic_radio_button_rang = selected_heuristic_radio_button_rang
+
     def _exit_protocol(self, event=None):
         """
         Exit the program
@@ -53,10 +68,10 @@ class MenuPresenter:
     def terminate_menu(self):
         self.__menu.window.destroy()
 
-    def select_difficulty(self):
+    def select_game_settings(self):
         """
         The current thread will loop for tkinter in order to display the GUI.
         :return: difficulty chosen by the player
         """
         self.__menu.launch_menu()
-        return self.__menu.last_selected_radio_button_rang
+        return self.__menu.last_selected_radio_button_rang, self.__menu.last_selected_heuristic_radio_button_rang

@@ -20,11 +20,11 @@ class BaseGameView:
         self._window.config(background=BOARD_BACKGROUND_COLOR, cursor='none')
 
         # init canvas and bind basic functionalities
-        self._canvas = tkinter.Canvas(self._window, height=window_height, width=window_width, bg=BOARD_BACKGROUND_COLOR)
-        self._canvas.pack(fill=tkinter.BOTH, expand=True)
-        self._canvas.bind('<1>', lambda event: self._canvas.focus_set())
+        self.canvas = tkinter.Canvas(self._window, height=window_height, width=window_width, bg=BOARD_BACKGROUND_COLOR)
+        self.canvas.pack(fill=tkinter.BOTH, expand=True)
+        self.canvas.bind('<1>', lambda event: self.canvas.focus_set())
         self._window.bind('<Escape>', self._exit_protocol)
-        self._canvas.bind('<m>', lambda event: self._return_to_menu())
+        self.canvas.bind('<m>', lambda event: self._return_to_menu())
 
         # label for selecting difficulty
         self._game_label = tkinter.Label(
@@ -69,7 +69,7 @@ class BaseGameView:
         self.optimal_solution = SOLUTION_OPTIMAL_COST[difficulty]
         self.exit = False
 
-    def _toggle_agent(self, event=None):
+    def toggle_agent(self, event=None):
         """
         Toggle search agent on/off
         :param event: function will only run for a <q> keypress

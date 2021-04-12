@@ -13,7 +13,7 @@ class MenuView:
         self.screen_size = (self.window.winfo_screenwidth(), self.window.winfo_screenheight())
         window_coord_x = self.screen_size[0] / 2 - window_width / 2
         window_coord_y = self.screen_size[1] / 2 - window_height / 2
-        self.window.geometry('%dx%d+%d+%d' % (window_height, window_width, window_coord_x, window_coord_y))
+        self.window.geometry('%dx%d+%d+%d' % (window_height, window_width + 50, window_coord_x, window_coord_y))
         self.window.iconphoto(False, tkinter.PhotoImage(file=WINDOW_LOGO_IMAGE_PATH))
         self.window.resizable(False, False)
 
@@ -64,12 +64,41 @@ class MenuView:
         self.difficulty_tkinter_images = []
         for image in PREVIEW_IMAGE_PATHS:
             difficulty_image = Image.open(image).resize(
-                (PREVIEW_DIFFICULTY_IMAGE_RESIZE_FACTOR, PREVIEW_DIFFICULTY_IMAGE_RESIZE_FACTOR),
+                (PREVIEW_DIFFICULTY_IMAGE_RESIZE_FACTOR-100, PREVIEW_DIFFICULTY_IMAGE_RESIZE_FACTOR-100),
                 Image.ANTIALIAS
             )
             self.difficulty_tkinter_images.append(ImageTk.PhotoImage(difficulty_image))
         self.difficulty_preview = tkinter.Label(self.canvas, bg=MENU_BACKGROUND_COLOR)
         self.difficulty_preview.pack()
+
+        # radio box for selecting heuristic
+        self.heuristicsContainer = tkinter.StringVar(self.canvas)
+        self.heuristicsContainer.set(0)
+        heuristics = [
+            (0, HEURISTIC_BUTTON0_TEXT),
+            (1, HEURISTIC_BUTTON1_TEXT),
+            (2, HEURISTIC_BUTTON2_TEXT),
+            (3, HEURISTIC_BUTTON3_TEXT)
+        ]
+        self.heuristic_radio_buttons = []
+        for rang, heuristic in heuristics:
+            r = tkinter.Radiobutton(
+                self.canvas,
+                variable=self.heuristicsContainer,
+                text=heuristic,
+                font=("Courier", 15),
+                value=rang,
+                indicator=0,
+                background=MENU_BACKGROUND_COLOR,
+                foreground=MENU_ACCENT_COLOR,
+                activebackground=MENU_ACCENT_COLOR,
+                activeforeground=MENU_BACKGROUND_COLOR,
+                selectcolor=MENU_ACCENT_COLOR,
+                highlightthickness=0
+            )
+            r.pack(fill=tkinter.X, ipady=5)
+            self.heuristic_radio_buttons.append(r)
+        self.last_selected_heuristic_radio_button_rang = 0
 
         # button for starting the game
         self.button = tkinter.Button(

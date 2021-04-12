@@ -9,6 +9,10 @@ LABEL_TEXT = "Please select the desired difficulty"
 RADIO_BUTTON0_TEXT = "Just wanna relax :)"
 RADIO_BUTTON1_TEXT = "I'll go for normal, thanks!"
 RADIO_BUTTON2_TEXT = "  I'm so looking for a headache..."
+HEURISTIC_BUTTON0_TEXT = "Manhattan heuristic"
+HEURISTIC_BUTTON1_TEXT = "Euclidean heuristic"
+HEURISTIC_BUTTON2_TEXT = "Chebyshev heuristic"
+HEURISTIC_BUTTON3_TEXT = "Octile heuristic"
 BUTTON_TEXT = "Start game"
 
 ###################################################### color #######################################################
