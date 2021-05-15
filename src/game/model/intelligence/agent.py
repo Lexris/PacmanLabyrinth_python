@@ -3,10 +3,19 @@ from heapq import heappush, heappop
 
 
 class Agent:
+    __instance = None
+
+    @staticmethod
+    def getInstance(game, heuristic):
+        if Agent.__instance is None:
+            Agent(game, heuristic)
+        return Agent.__instance
 
     def __init__(self, game, heuristic):
-        self.game = game
-        self.heuristic = heuristic
+        if Agent.__instance is None:
+            self.game = game
+            self.heuristic = heuristic
+            Agent.__instance = self
 
     def euclidean_heuristic(self, state_board_coords):
         """

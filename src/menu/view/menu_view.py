@@ -13,7 +13,7 @@ class MenuView:
         self.screen_size = (self.window.winfo_screenwidth(), self.window.winfo_screenheight())
         window_coord_x = self.screen_size[0] / 2 - window_width / 2
         window_coord_y = self.screen_size[1] / 2 - window_height / 2
-        self.window.geometry('%dx%d+%d+%d' % (window_height, window_width + 50, window_coord_x, window_coord_y))
+        self.window.geometry('%dx%d+%d+%d' % (window_height, window_width + 220, window_coord_x, window_coord_y-125))
         self.window.iconphoto(False, tkinter.PhotoImage(file=WINDOW_LOGO_IMAGE_PATH))
         self.window.resizable(False, False)
 
@@ -24,7 +24,7 @@ class MenuView:
         # label for selecting difficulty
         self.difficulty_label = tkinter.Label(
             self.canvas,
-            text=LABEL_TEXT,
+            text=LABEL_TEXT[0],
             pady=20,
             width=window_width,
             background=MENU_ACCENT_COLOR,
@@ -36,9 +36,9 @@ class MenuView:
         self.difficultiesContainer = tkinter.StringVar(self.canvas)
         self.difficultiesContainer.set(0)
         difficulties = [
-            (0, RADIO_BUTTON0_TEXT),
-            (1, RADIO_BUTTON1_TEXT),
-            (2, RADIO_BUTTON2_TEXT)
+            (0, RADIO_BUTTON0_TEXT[0]),
+            (1, RADIO_BUTTON1_TEXT[0]),
+            (2, RADIO_BUTTON2_TEXT[0])
         ]
         self.radio_buttons = []
         for rang, difficulty in difficulties:
@@ -75,10 +75,10 @@ class MenuView:
         self.heuristicsContainer = tkinter.StringVar(self.canvas)
         self.heuristicsContainer.set(0)
         heuristics = [
-            (0, HEURISTIC_BUTTON0_TEXT),
-            (1, HEURISTIC_BUTTON1_TEXT),
-            (2, HEURISTIC_BUTTON2_TEXT),
-            (3, HEURISTIC_BUTTON3_TEXT)
+            (0, HEURISTIC_BUTTON0_TEXT[0]),
+            (1, HEURISTIC_BUTTON1_TEXT[0]),
+            (2, HEURISTIC_BUTTON2_TEXT[0]),
+            (3, HEURISTIC_BUTTON3_TEXT[0])
         ]
         self.heuristic_radio_buttons = []
         for rang, heuristic in heuristics:
@@ -103,7 +103,7 @@ class MenuView:
         # button for starting the game
         self.button = tkinter.Button(
             self.canvas,
-            text=BUTTON_TEXT,
+            text=BUTTON_TEXT[0],
             font=("Courier", 40),
             width=window_width,
             background=MENU_ACCENT_COLOR,
@@ -112,6 +112,34 @@ class MenuView:
             activeforeground=MENU_ACCENT_COLOR,
         )
         self.button.pack()
+
+        # radio box for selecting language
+        self.languagesContainer = tkinter.StringVar(self.canvas)
+        self.languagesContainer.set(0)
+        languages = [
+            (0, "ROMANA"),
+            (1, "ENGLISH"),
+            (2, "ESPANOL"),
+        ]
+        self.languages_radio_buttons = []
+        for rang, language in languages:
+            r = tkinter.Radiobutton(
+                self.canvas,
+                variable=self.languagesContainer,
+                text=language,
+                font=("Courier", 15),
+                value=rang,
+                indicator=0,
+                background=MENU_BACKGROUND_COLOR,
+                foreground=MENU_ACCENT_COLOR,
+                activebackground=MENU_ACCENT_COLOR,
+                activeforeground=MENU_BACKGROUND_COLOR,
+                selectcolor=MENU_ACCENT_COLOR,
+                highlightthickness=0
+            )
+            r.pack(fill=tkinter.X, ipady=5)
+            self.languages_radio_buttons.append(r)
+        self.last_selected_language_radio_button_rang = 0
 
         self.exit = False
 

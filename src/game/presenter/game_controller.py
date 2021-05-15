@@ -9,7 +9,7 @@ import time
 class GamePresenter:
     def __init__(self, window_height, window_width, difficulty, heuristic):
         self._game = PacmanView(window_height, window_width, difficulty)
-        self._agent = Agent(self._game, heuristic)
+        self._agent = Agent.getInstance(self._game, heuristic)
 
         # bind specific pacman functionalities to canvas
         self._game.canvas.bind('<Configure>', self._game.setup_board)

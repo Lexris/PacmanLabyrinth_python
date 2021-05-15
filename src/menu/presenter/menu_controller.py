@@ -1,3 +1,4 @@
+from src.menu.model.observer import Observer
 from src.menu.view.menu_view import MenuView
 from src.menu.model.utils.constants import *
 
@@ -5,6 +6,7 @@ from src.menu.model.utils.constants import *
 class MenuPresenter:
     def __init__(self, window_height, window_width):
         self.__menu = MenuView(window_height, window_width)
+        self.observer = Observer(self.__menu)
 
         # attach custom exit protocol to 'x' exiting icon
         self.__menu.window.protocol('WM_DELETE_WINDOW', self._exit_protocol)
@@ -22,9 +24,13 @@ class MenuPresenter:
         for rb in self.__menu.heuristic_radio_buttons:
             rb.config(command=self._heuristic_radio_buttons_bind)
 
+        for rb in self.__menu.languages_radio_buttons:
+            rb.config(command=self._language_radio_buttons_bind)
+
         # init radiobutton and difficulty preview image
         self.__menu.radio_buttons[1].invoke()
         self.__menu.heuristic_radio_buttons[0].invoke()
+        self.__menu.languages_radio_buttons[0].invoke()
 
         # bind submit button to start game with selected difficulty
         self.__menu.button.config(command=lambda: self.terminate_menu())
@@ -53,6 +59,18 @@ class MenuPresenter:
         self.__menu.heuristic_radio_buttons[selected_heuristic_radio_button_rang].configure(foreground=MENU_BACKGROUND_COLOR,
                                                                         background=MENU_ACCENT_COLOR)
         self.__menu.last_selected_heuristic_radio_button_rang = selected_heuristic_radio_button_rang
+
+    def _language_radio_buttons_bind(self):
+        """
+        Update appearance of the lastly and newly pressed radio buttons
+        """
+        selected_language_radio_button_rang = int(self.__menu.languagesContainer.get())
+        self.__menu.languages_radio_buttons[self.__menu.last_selected_language_radio_button_rang].configure(foreground=MENU_ACCENT_COLOR,
+                                                                                         background=MENU_BACKGROUND_COLOR)
+        self.__menu.languages_radio_buttons[selected_language_radio_button_rang].configure(foreground=MENU_BACKGROUND_COLOR,
+                                                                        background=MENU_ACCENT_COLOR)
+        self.__menu.last_selected_language_radio_button_rang = selected_language_radio_button_rang
+        self.observer.actualizare_limba(selected_language_radio_button_rang)
 
     def _exit_protocol(self, event=None):
         """
