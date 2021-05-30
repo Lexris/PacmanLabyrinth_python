@@ -1,4 +1,4 @@
-from src.menu.model.utils.constants import *
+from src.menu.utils.constants import *
 
 
 class Observer:

@@ -1,7 +1,7 @@
 from PIL import Image, ImageTk
 
 from src.game.view.base_game_view import BaseGameView
-from src.game.model.utils.constants import *
+from src.game.utils.constants import *
 
 
 class PacmanView(BaseGameView):

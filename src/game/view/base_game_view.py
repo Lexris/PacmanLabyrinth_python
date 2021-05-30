@@ -2,7 +2,7 @@ import time
 import tkinter
 
 from src.utils.constants import *
-from src.game.model.utils.constants import *
+from src.game.utils.constants import *
 
 
 class BaseGameView:

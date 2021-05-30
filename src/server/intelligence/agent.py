@@ -1,21 +1,45 @@
 from enum import Enum
 from heapq import heappush, heappop
+import socket, pickle
+import ctypes
 
 
 class Agent:
     __instance = None
+    HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+    PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
     @staticmethod
-    def getInstance(game, heuristic):
+    def getInstance(pacman_food_board_coords, pacman_board_coords, cost, heuristic, board):
         if Agent.__instance is None:
-            Agent(game, heuristic)
+            Agent(pacman_food_board_coords, pacman_board_coords, cost, heuristic, board)
+        else:
+            Agent.__instance.pacman_food_board_coords = pacman_food_board_coords
+            Agent.__instance.pacman_board_coords = pacman_board_coords
+            Agent.__instance.cost = cost
+            Agent.__instance.heuristic = heuristic
+            Agent.__instance.board = board
         return Agent.__instance
 
-    def __init__(self, game, heuristic):
+    def __init__(self, pacman_food_board_coords, pacman_board_coords, cost, heuristic, board):
         if Agent.__instance is None:
-            self.game = game
+            self.pacman_food_board_coords = pacman_food_board_coords
+            self.pacman_board_coords = pacman_board_coords
+            self.cost = cost
             self.heuristic = heuristic
+            self.board = board
             Agent.__instance = self
+
+    def is_goal_state(self, state=None):
+        """
+        Check if pacman has reached the food.
+        :param state: state to be checked; if None, current state of the game will be checked
+        :return: True if state is goal state, False otherwise
+        """
+        if state:
+            return state == self.pacman_food_board_coords
+        else:
+            return self.pacman_board_coords == self.pacman_food_board_coords
 
     def euclidean_heuristic(self, state_board_coords):
         """
@@ -26,7 +50,7 @@ class Agent:
         :return: heuristic distance value
         """
         xy1 = state_board_coords
-        xy2 = self.game.pacman_food_board_coords
+        xy2 = self.pacman_food_board_coords
         return ((xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2) ** 0.5
 
     def manhattan_heuristic(self, state_board_coords):
@@ -36,14 +60,14 @@ class Agent:
         :return: heuristic distance value
         """
         xy1 = state_board_coords
-        xy2 = self.game.pacman_food_board_coords
+        xy2 = self.pacman_food_board_coords
         return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
     DIAGONAL_HEURISTIC_MODE = Enum("CHEBYSHEV", "OCTILE")
 
     def diagonal_heuristic(self, state_board_coords, heuristic_mode):
         xy1 = state_board_coords
-        xy2 = self.game.pacman_food_board_coords
+        xy2 = self.pacman_food_board_coords
         dx = abs(xy1[0] - xy2[0])
         dy = abs(xy1[1] - xy2[1])
         if heuristic_mode == "CHEBYSHEV":
@@ -91,19 +115,31 @@ class Agent:
         else:
             return self.manhattan_heuristic
 
+    # def get_selected_heuristic_value(self, state_board_coords):
+    #     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #     s.connect((self.HOST, self.PORT))
+    #     s.sendall(pickle.dumps((state_board_coords, self.pacman_food_board_coords, self.heuristic)))
+    #     data = s.recv(4096)
+    #     if data:
+    #         data2 = pickle.loads(data)
+    #         #print(data2)
+    #         return data2
+    #     s.close()
+    #     return 0
+
     def astar_search(self):
         """
         Astar algorithm implementation.
         """
-        current_state = self.game.pacman_board_coords
+        current_state = self.pacman_board_coords
         action_list = []
         no_of_expanded_nodes = 0
 
         visited = []
         heap = []
-        heappush(heap, (self.game.cost, current_state, action_list))
+        heappush(heap, (self.cost, current_state, action_list))
 
-        while heap and not self.game.is_goal_state(current_state):
+        while heap and not self.is_goal_state(current_state):
             no_of_expanded_nodes += 1
             heap_top = heappop(heap)
             current_state, action_list = (heap_top[i] for i in [1, 2])
@@ -111,11 +147,12 @@ class Agent:
             if current_state not in visited:
                 visited.append(current_state)
 
-            for successor in self.get_successors(current_state, self.game.board):
+            for successor in self.get_successors(current_state, self.board):
                 if successor[0] not in visited:
                     heappush(heap, (
                         len(action_list) + 1 + self.get_selected_heuristic_value(successor[0]), successor[0],
                         action_list + [successor[1]]))
 
         print("Number of expanded nodes is " + str(no_of_expanded_nodes))
+
         return action_list
