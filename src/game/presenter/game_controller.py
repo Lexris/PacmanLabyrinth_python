@@ -2,13 +2,13 @@ import threading
 import pyautogui
 import socket, pickle
 
+from src.game.server_proxy import ServerProxy
+from src.game.utils.constants import HOST, PORT
 from src.game.view.pacman_view import PacmanView
 import time
 
 
 class GamePresenter:
-    HOST = '127.0.0.1'  # The server's hostname or IP address
-    PORT = 65432  # The port used by the server
 
     def __init__(self, window_height, window_width, difficulty, heuristic):
         self._game = PacmanView(window_height, window_width, difficulty)
@@ -26,28 +26,40 @@ class GamePresenter:
         Time polling is used in other to reduce the resources used by the active waiting, since we need the agent to start
         only when/if it is initiated through the game event and the same goes for exiting the program.
         """
+        server_proxy = ServerProxy(HOST, PORT)
+        server_proxy.connect()
         while True:
             if self._game.game_state or self._game.exit:
+                server_proxy.disconnect()
                 exit(2)
             elif self._game.agent_state:
                 pyautogui.click(x=self._game.screen_size[0] / 2, y=self._game.screen_size[1] / 2)
-
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect((self.HOST, self.PORT))
-                s.sendall(pickle.dumps((self._game.pacman_food_board_coords, self._game.pacman_board_coords, self._game.cost, self._heuristic, self._game.board)))
-                data = s.recv(4096)
-                if data:
-                    data2 = pickle.loads(data)
-                    solution = data2
-                    for move in solution:
-                        pyautogui.press(move)
-                        if self._game.exit is True:
-                            exit(2)
-                        if not self._game.agent_state:
-                            break
-                    self._game.agent_state = False
-                    # print(data2)
-                s.close()
+                solution = server_proxy.get_solution_from_server(self._game.pacman_food_board_coords,
+                                                                 self._game.pacman_board_coords, self._game.cost,
+                                                                 self._heuristic, self._game.board)
+                for move in solution:
+                    pyautogui.press(move)
+                    if self._game.exit is True:
+                        exit(2)
+                    if not self._game.agent_state:
+                        break
+                self._game.agent_state = False
+                # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # s.connect((HOST, PORT))
+                # s.sendall(pickle.dumps((self._game.pacman_food_board_coords, self._game.pacman_board_coords, self._game.cost, self._heuristic, self._game.board)))
+                # data = s.recv(4096)
+                # if data:
+                #     data2 = pickle.loads(data)
+                #     solution = data2
+                #     for move in solution:
+                #         pyautogui.press(move)
+                #         if self._game.exit is True:
+                #             exit(2)
+                #         if not self._game.agent_state:
+                #             break
+                #     self._game.agent_state = False
+                #     # print(data2)
+                # s.close()
 
             time.sleep(0.25)
 

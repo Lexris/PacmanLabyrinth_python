@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import socket, pickle
+import pickle
+import socket
 
 from src.server.intelligence.agent import Agent
 
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
+HOST = '127.0.0.1'
+PORT = 65432
 
 if __name__ == '__main__':
     while True:
